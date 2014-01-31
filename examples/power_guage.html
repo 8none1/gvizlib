@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+    <script type="text/javascript">
+    google.load("jquery", "1.7.1");
+    google.load('visualization', '1', {'packages':['gauge']});
+          
+    // Set a callback to run when the Google Visualization API is loaded.
+    google.setOnLoadCallback(drawChart);
+
+    options = {
+         width: 150, height: 150,
+         min: 0, max: 10000,
+         greenFrom: 0, greenTo: 1000,
+         yellowFrom: 2500, yellowTo: 5000,
+         redFrom: 5000, redTo: 10000,
+         animation: {easing: 'inAndOut'}
+       };    
+
+    function loadData() {
+      var jsonData = $.ajax({
+        url: "current_power_usage.py",
+        dataType: "text",
+        async: false
+      }).responseText;
+      return jsonData;
+    };
+
+    function updateChart() {
+      data = new google.visualization.DataTable(loadData());
+      chart.draw(data,options);
+      t = setTimeout(updateChart,30000);
+    };
+    
+    function drawChart() {
+       data = new google.visualization.DataTable(loadData());
+       chart = new google.visualization.Gauge(document.getElementById('chart_div')); 
+       chart.draw(data,options);
+       updateChart();
+    }
+    </script>
+
+  </head>
+
+  <body>
+    <!--Div that will hold the pie chart-->
+    <div id="chart_div" style="height: 150px; width: 150px"></div>
+  </body>
+</html>

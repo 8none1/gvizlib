@@ -1,0 +1,47 @@
+<html>
+  <head>
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+    <script type="text/javascript">
+    google.load("jquery", "1.7.1");
+    google.load('visualization', '1', {'packages':['corechart']});
+          
+    // Set a callback to run when the Google Visualization API is loaded.
+    google.setOnLoadCallback(drawChart);
+
+    options = {
+         width: 300, height: 300,
+         title: "MinMax Temperatures"
+       };    
+
+    function loadData() {
+      var jsonData = $.ajax({
+        url: "minmax_temperature.py",
+        dataType: "text",
+        async: false
+      }).responseText;
+      return jsonData;
+    };
+
+    function updateChart() {
+      data = new google.visualization.DataTable(loadData());
+      chart.draw(data,options);
+      //t = setTimeout(updateChart, 1800000);
+    };
+    
+    function drawChart() {
+       data = new google.visualization.DataTable(loadData());
+       chart = new google.visualization.BarChart(document.getElementById('chart_div')); 
+       chart.draw(data,options);
+       updateChart();
+    }
+    </script>
+
+  </head>
+
+  <body style="padding:0; margin:0">
+    <!--Div that will hold the pie chart-->
+    <div id="chart_div"></div>
+  </body>
+</html>
